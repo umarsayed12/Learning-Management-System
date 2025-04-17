@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
-const Login = () => {
+const Authenticate = () => {
   const [loginInput, setLoginInput] = useState({ email: "", password: "" });
   const [signupInput, setSignupInput] = useState({
     name: "",
@@ -128,4 +128,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Authenticate;
