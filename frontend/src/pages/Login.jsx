@@ -31,7 +31,7 @@ const Login = () => {
   };
 
   const handleRegistration = (type) => {
-    //Authentication Logic
+    //Authentication logic
   };
 
   return (
@@ -79,7 +79,9 @@ const Login = () => {
           <Card>
             <CardHeader>
               <CardTitle>Signup</CardTitle>
-              <CardDescription>Hey there! Create your Account.</CardDescription>
+              <CardDescription>
+                Hey there! Register your Account.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-1">
