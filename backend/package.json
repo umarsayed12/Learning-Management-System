@@ -5,7 +5,18 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon index.js"
+    "start": "node index.js",
+    "start:watch": "npm-watch"
+  },
+  "watch": {
+    "start": {
+      "patterns": [
+        "index.js",
+        "routes/*.js",
+        "controllers/*.js"
+      ],
+      "extensions": "js"
+    }
   },
   "keywords": [
     "lms",
@@ -19,7 +30,10 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.13.2",
-    "nodemon": "^3.1.9"
+    "mongoose": "^8.13.2"
+  },
+  "devDependencies": {
+    "node-dev": "^8.0.0",
+    "npm-watch": "^0.13.0"
   }
 }
