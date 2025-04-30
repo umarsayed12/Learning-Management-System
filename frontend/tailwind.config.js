@@ -57,7 +57,7 @@ export default {
         },
         custom: {
           blueDark: "#3d348b",
-          blue: "#7678ed",
+          blue: "#4361ee",
           yellow: "#f7b801",
           orangeLight: "#f18701",
           orange: "#f35b04",
