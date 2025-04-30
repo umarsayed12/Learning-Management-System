@@ -6,17 +6,18 @@ import App from "./App.jsx";
 import { Provider } from "react-redux";
 import { appStore } from "./app/store";
 import { Toaster } from "./components/ui/sonner";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import Authenticate from "./pages/Login";
+import HeroSection from "./components/HeroSection";
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
-      // {
-      //   path: "/",
-      //   element: <HomePage />,
-      // },
+      {
+        path: "/",
+        element: <HeroSection />,
+      },
       {
         path: "/login",
         element: (
