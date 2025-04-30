@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Moon, Sun, Menu, X, UserCircle } from "lucide-react";
+import { TabsTrigger } from "@radix-ui/react-tabs";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ isLoggedIn }) => {
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.toggle("dark", darkMode);
@@ -18,14 +20,16 @@ const Navbar = ({ isLoggedIn }) => {
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between relative">
         {/* Left: Logo */}
         <div className="flex items-center space-x-2">
-          <span className="text-xl font-bold text-custom-yellow">Lumora</span>
+          <span className="text-4xl font-bold font-cedar text-custom-yellow">
+            Lumora
+          </span>
         </div>
 
         {/* Center: Links */}
         <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 space-x-8">
           {["Home", "Features", "About", "Contact"].map((item) => (
             <a key={item} href="#" className="relative group">
-              <span className="group-hover:underline underline-offset-4">
+              <span className="group-hover:text-custom-yellow underline-offset-4">
                 {item}
               </span>
             </a>
@@ -45,10 +49,16 @@ const Navbar = ({ isLoggedIn }) => {
             <UserCircle className="w-6 h-6 text-custom-orange" />
           ) : (
             <>
-              <button className="px-4 py-1 rounded bg-custom-orange hover:bg-custom-orangeLight">
+              <button
+                onClick={() => navigate("/login")}
+                className="px-4 py-1 rounded bg-white text-custom-blueDark hover:bg-black hover:text-white"
+              >
                 Login
               </button>
-              <button className="px-4 py-1 rounded bg-custom-yellow hover:bg-yellow-500">
+              <button
+                onClick={() => navigate("/signup")}
+                className="px-4 py-1 rounded text-custom-blueDark bg-custom-yellow hover:bg-yellow-500"
+              >
                 Sign Up
               </button>
             </>
@@ -57,6 +67,13 @@ const Navbar = ({ isLoggedIn }) => {
 
         {/* Mobile Right: Hamburger + Profile */}
         <div className="md:hidden flex items-center space-x-3">
+          <button onClick={toggleDarkMode}>
+            {darkMode ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
+          </button>
           {isLoggedIn && <UserCircle className="w-6 h-6 text-custom-orange" />}
           <button onClick={toggleMenu}>
             {menuOpen ? (
@@ -69,34 +86,41 @@ const Navbar = ({ isLoggedIn }) => {
       </div>
 
       {/* Mobile Menu (Dropdown Overlay) */}
+
       {menuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-custom-blueDark dark:bg-gray-900 text-white px-6 py-4 space-y-4 shadow-lg z-40">
-          <ul className="space-y-3">
+        <div className="md:hidden absolute top-full left-0 w-full bg-transparent backdrop-blur-md dark:bg-gray-900 text-black px-6 py-4 space-y-4 shadow-lg z-40">
+          <ul className="space-y-3 w-full">
             {["Home", "Features", "About", "Contact"].map((item) => (
-              <li key={item}>
+              <li className="flex justify-center" key={item}>
                 <a
+                  onClick={() => setMenuOpen(!menuOpen)}
                   href="#"
-                  className="block w-fit border-b-2 border-transparent hover:border-custom-orange transition duration-200"
+                  className="block w-fit border-b-2 text-center border-transparent hover:border-custom-orange transition duration-200"
                 >
                   {item}
                 </a>
               </li>
             ))}
           </ul>
-          <div className="flex items-center space-x-4 pt-4 border-t border-gray-700">
-            <button onClick={toggleDarkMode}>
-              {darkMode ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </button>
+          <div className="flex items-center justify-center space-x-4 pt-4 border-t border-gray-700">
             {!isLoggedIn && (
               <>
-                <button className="px-4 py-1 rounded bg-custom-orange hover:bg-custom-orangeLight">
+                <button
+                  onClick={() => {
+                    setMenuOpen(!menuOpen);
+                    navigate("/login");
+                  }}
+                  className="px-4 py-1 rounded bg-custom-orange hover:bg-custom-orangeLight"
+                >
                   Login
                 </button>
-                <button className="px-4 py-1 rounded bg-custom-yellow hover:bg-yellow-500">
+                <button
+                  onClick={() => {
+                    setMenuOpen(!menuOpen);
+                    navigate("/signup");
+                  }}
+                  className="px-4 py-1 rounded bg-custom-yellow hover:bg-yellow-500"
+                >
                   Sign Up
                 </button>
               </>

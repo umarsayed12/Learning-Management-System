@@ -19,7 +19,25 @@ import {
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-const Authenticate = () => {
+import { useLocation } from "react-router-dom";
+
+function Authenticate() {
+  const location = useLocation();
+  const [tabValue, setTabValue] = useState("login");
+
+  useEffect(() => {
+    if (location.pathname === "/signup") {
+      setTabValue("signup");
+    } else {
+      setTabValue("login");
+    }
+  }, [location.pathname]);
+
+  const handleTabChange = (value) => {
+    setTabValue(value);
+    navigate(`/${value}`);
+  };
+
   const [loginInput, setLoginInput] = useState({ email: "", password: "" });
   const [signupInput, setSignupInput] = useState({
     name: "",
@@ -85,7 +103,11 @@ const Authenticate = () => {
 
   return (
     <Container>
-      <Tabs defaultValue="login" className="w-[400px]">
+      <Tabs
+        value={tabValue}
+        onValueChange={handleTabChange}
+        className="w-[400px]"
+      >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="login">Login</TabsTrigger>
           <TabsTrigger value="signup">Signup</TabsTrigger>
@@ -199,6 +221,6 @@ const Authenticate = () => {
       </Tabs>
     </Container>
   );
-};
+}
 
 export default Authenticate;
