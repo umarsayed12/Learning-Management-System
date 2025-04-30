@@ -115,7 +115,7 @@ function Authenticate() {
         <TabsContent value="login">
           <Card>
             <CardHeader>
-              <CardTitle>Login</CardTitle>
+              <CardTitle className="text-xl">Login</CardTitle>
               <CardDescription>
                 Welcome back! Login to your account.
               </CardDescription>
@@ -147,11 +147,9 @@ function Authenticate() {
                 onClick={() => handleRegistration("login")}
               >
                 {loginIsLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin">
-                      Please
-                    </Loader2>
-                  </>
+                  <div className="flex justify-center items-center">
+                    <Loader2 className="h-4 w-4 animate-spin">Please</Loader2>
+                  </div>
                 ) : (
                   "Login"
                 )}
@@ -162,7 +160,7 @@ function Authenticate() {
         <TabsContent value="signup">
           <Card>
             <CardHeader>
-              <CardTitle>Signup</CardTitle>
+              <CardTitle className="text-xl">Signup</CardTitle>
               <CardDescription>
                 Hey there! Register your Account.
               </CardDescription>
@@ -206,11 +204,11 @@ function Authenticate() {
                 onClick={() => handleRegistration("signup")}
               >
                 {registerIsLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin">
+                  <div className="flex justify-center items-center">
+                    <Loader2 className="h-4 w-4 animate-spin">
                       Please wait...
                     </Loader2>
-                  </>
+                  </div>
                 ) : (
                   "Signup"
                 )}
