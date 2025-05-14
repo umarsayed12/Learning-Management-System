@@ -8,7 +8,10 @@ import { appStore } from "./app/store";
 import { Toaster } from "./components/ui/sonner";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import Authenticate from "./pages/Login";
-import HeroSection from "./components/HeroSection";
+import HeroSection from "./pages/student/HeroSection";
+import AllCourses from "./pages/student/AllCourses";
+import MyLearning from "./pages/student/MyLearning";
+import ProfilePage from "./pages/student/ProfilePage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -35,6 +38,18 @@ const router = createBrowserRouter([
           //   <Signup />
           // </AuthLayout>
         ),
+      },
+      {
+        path: "/all-courses",
+        element: <AllCourses />,
+      },
+      {
+        path: "/my-learnings",
+        element: <MyLearning />,
+      },
+      {
+        path: "/profile",
+        element: <ProfilePage />,
       },
     ],
   },

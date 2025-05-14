@@ -23,8 +23,12 @@ const Navbar = ({ isLoggedIn }) => {
       nav: "/",
     },
     {
+      title: "Courses",
+      nav: "/all-courses",
+    },
+    {
       title: "My Learnings",
-      nav: "/",
+      nav: "/my-learnings",
     },
     {
       title: "Explore",
@@ -36,7 +40,7 @@ const Navbar = ({ isLoggedIn }) => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
-    <nav className="bg-transparent text-black dark:text-white fixed w-full z-50">
+    <nav className="bg-transparent backdrop-blur-md text-black dark:text-white fixed w-full z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between relative">
         {/* Left: Logo */}
         <div className="flex items-center space-x-2">

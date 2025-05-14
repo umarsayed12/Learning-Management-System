@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { User, Book, LogOut, UserCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function ProfileDropdown() {
   const [open, setOpen] = useState(false);
@@ -30,14 +31,24 @@ export function ProfileDropdown() {
             My Account
           </div>
           <ul className="py-1 text-gray-800 dark:text-gray-100">
-            <li className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer gap-2">
-              <User className="w-4 h-4" />
-              Profile
-            </li>
-            <li className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer gap-2">
-              <Book className="w-4 h-4" />
-              My Learnings
-            </li>
+            <Link to="/profile" className="">
+              <li
+                onClick={() => setOpen(false)}
+                className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer gap-2"
+              >
+                <User className="w-4 h-4" />
+                Profile
+              </li>
+            </Link>
+            <Link to="/my-learnings" className="">
+              <li
+                onClick={() => setOpen(false)}
+                className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer gap-2"
+              >
+                <Book className="w-4 h-4" />
+                My Learnings
+              </li>
+            </Link>
           </ul>
           <div className="border-t dark:border-gray-700 px-4 py-2">
             <div className="flex items-center gap-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-600/10 cursor-pointer rounded py-1">
