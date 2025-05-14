@@ -59,5 +59,26 @@ export const login = async (req, res) => {
       });
     }
     generateToken(res, user, `Welcome Back ${user.name}`);
-  } catch (error) {}
+  } catch (error) {
+    console.log("Login Error : ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error : Failed to Login",
+    });
+  }
+};
+
+export const logout = async (_, res) => {
+  try {
+    return res.status(200).cookies("token", "", { maxAge: 0 }).json({
+      message: "User Logged Out Successfully.",
+      success: true,
+    });
+  } catch (error) {
+    console.log("Logout Error : ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error : Failed to Logout",
+    });
+  }
 };

@@ -106,7 +106,7 @@ export const Card = ({ className, children, loading }) => {
   return (
     <div
       className={cn(
-        "rounded-2xl h-full w-[90%] p-4 overflow-hidden bg-white dark:bg-zinc-900 border border-transparent dark:border-white/[0.2] border-slate-700 relative z-20",
+        "rounded-2xl h-full w-full p-4 overflow-hidden bg-white dark:bg-zinc-900 border border-transparent dark:border-white/[0.2] border-slate-700 relative z-20",
         "flex flex-col",
         className
       )}
