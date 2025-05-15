@@ -19,12 +19,12 @@ import {
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Authenticate() {
   const location = useLocation();
   const [tabValue, setTabValue] = useState("login");
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (location.pathname === "/signup") {
       setTabValue("signup");

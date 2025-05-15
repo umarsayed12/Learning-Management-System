@@ -82,3 +82,49 @@ export const logout = async (_, res) => {
     });
   }
 };
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.id;
+    const user = await User.findById(userId).select("-password"); //it will select/fetch everything except password
+    if (!user) {
+      return res.status(404).json({
+        message: "User Profile Not Found",
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.log("Profile Error : ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error : Failed to fetch User Profile",
+    });
+  }
+};
+
+export const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.id;
+    const { name } = req.body;
+    const profileImg = req.file;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User Not Found",
+        success: false,
+      });
+    }
+    const updatedData = { name, profileImg };
+  } catch (error) {
+    console.log("Update Profile Error : ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error : Failed to Update User Profile",
+    });
+  }
+};
