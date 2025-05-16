@@ -11,12 +11,50 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useLoadUserQuery } from "@/slices/api/authApi";
-import { useState } from "react";
+import { useLoadUserQuery, useUpdateUserMutation } from "@/slices/api/authApi";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 function ProfilePage() {
-  const { data, isLoading } = useLoadUserQuery();
+  const { data, isLoading, refetch } = useLoadUserQuery();
+  const [name, setName] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+  const [
+    updateUser,
+    {
+      data: updateUserData,
+      isLoading: updateuserIsLoading,
+      error,
+      isSuccess,
+      isError,
+    },
+  ] = useUpdateUserMutation();
+
+  const onChangeHandler = (e) => {
+    const file = e.target.files?.[0];
+    if (file) setProfileImage(file);
+  };
+
+  const handleUserUpdate = async () => {
+    const formdata = new FormData();
+    if (!name && !profileImage) return;
+    if (name) formdata.append("name", name);
+    if (profileImage) formdata.append("profileImage", profileImage);
+    await updateUser(formdata);
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+      toast.success(data.message || "Profile Updated Successfully.");
+    }
+    if (isError) {
+      toast.error(error.message || "Some Error Occured. Please Try Again.");
+    }
+  }, [error, updateUserData, isSuccess, isError]);
+
   if (isLoading) {
     return (
       <div className="p-16 pt-16 w-full min-h-screen">
@@ -35,8 +73,9 @@ function ProfilePage() {
       </div>
     );
   }
-  const { user } = data;
+  const user = data && data.user;
   // console.log(user);
+
   return (
     <div className="p-16 pt-16 w-full min-h-screen">
       <h1 className="text-3xl p-5 border-b-2 text-center lg:text-start font-zilla font-bold text-blueDark mb-8">
@@ -45,19 +84,69 @@ function ProfilePage() {
       <div className="flex flex-col md:flex-row items-center p-6 pb-10 gap-6">
         <div className="w-[200px] h-[200px] overflow-hidden rounded-full">
           <img
-            src={user.imageUrl || "Umar_Photo.png"}
+            src={user?.imageUrl || "Umar_Photo.png"}
             alt="Profile Photo"
             className="object-cover w-full h-full"
           />
         </div>
         <div className="flex flex-col gap-2 p-4">
-          <div>Name : {user.name}</div>
-          <div>Email : {user.email}</div>
+          <div>Name : {user?.name}</div>
+          <div>Email : {user?.email}</div>
           <div>
-            Role : {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+            Role : {user?.role.charAt(0).toUpperCase() + user?.role.slice(1)}
           </div>
           <div></div>
-          <Edit name={name} />
+
+          {/* Edit Profile */}
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Edit Profile</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Edit profile</DialogTitle>
+                <DialogDescription>
+                  Make changes to your profile here. Click save when you're
+                  done.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    onChange={(e) => setName(e.target.value)}
+                    value={name}
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="username" className="text-right">
+                    Photo
+                  </Label>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    id="profile"
+                    onChange={onChangeHandler}
+                    className="col-span-3 cursor-pointer"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  disabled={updateuserIsLoading}
+                  onClick={handleUserUpdate}
+                  type="submit"
+                >
+                  {updateuserIsLoading ? <Loader2 /> : "Save changes"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <div>
@@ -65,7 +154,7 @@ function ProfilePage() {
           Enrolled Courses
         </h2>
         <div className="w-full">
-          {user.coursesEnrolled.length ? (
+          {user?.coursesEnrolled.length ? (
             <HoverEffect items={coursesEnrolled} />
           ) : (
             <div className="h-full w-full flex items-center justify-center gap-1">
@@ -88,43 +177,3 @@ function ProfilePage() {
 }
 
 export default ProfilePage;
-
-export const Edit = ({ name }) => {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input id="name" defaultValue={name} className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
-              Photo
-            </Label>
-            <Input
-              type="file"
-              accept="image/*"
-              id="profile"
-              className="col-span-3 cursor-pointer"
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};

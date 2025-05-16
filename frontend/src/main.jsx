@@ -12,6 +12,9 @@ import HeroSection from "./pages/student/HeroSection";
 import AllCourses from "./pages/student/AllCourses";
 import MyLearning from "./pages/student/MyLearning";
 import ProfilePage from "./pages/student/ProfilePage";
+import AuthLayout from "./components/AuthLayout";
+import { useLoadUserQuery } from "./slices/api/authApi";
+import LoadingScreen from "./components/LoadingScreen";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -24,19 +27,17 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: (
-          <Authenticate />
-          // <AuthLayout authentication={false}>
-          //   <Login />
-          // </AuthLayout>
+          <AuthLayout authentication={false}>
+            <Authenticate />
+          </AuthLayout>
         ),
       },
       {
         path: "/signup",
         element: (
-          <Authenticate />
-          // <AuthLayout authentication={false}>
-          //   <Signup />
-          // </AuthLayout>
+          <AuthLayout authentication={false}>
+            <Authenticate />
+          </AuthLayout>
         ),
       },
       {
@@ -45,20 +46,36 @@ const router = createBrowserRouter([
       },
       {
         path: "/my-learnings",
-        element: <MyLearning />,
+        element: (
+          <AuthLayout authentication={true}>
+            <MyLearning />
+          </AuthLayout>
+        ),
       },
       {
         path: "/profile",
-        element: <ProfilePage />,
+        element: (
+          <AuthLayout authentication={true}>
+            <ProfilePage />
+          </AuthLayout>
+        ),
       },
     ],
   },
 ]);
+
+const Loading = ({ children }) => {
+  const { isLoading } = useLoadUserQuery();
+  return isLoading ? <LoadingScreen /> : <>{children}</>;
+};
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={appStore}>
-      <RouterProvider router={router} />
-      <Toaster />
+      <Loading>
+        <RouterProvider router={router} />
+        <Toaster />
+      </Loading>
     </Provider>
   </StrictMode>
 );

@@ -3,36 +3,41 @@ import { Moon, Sun, Menu, X, UserCircle } from "lucide-react";
 import { TabsTrigger } from "@radix-ui/react-tabs";
 import { useNavigate } from "react-router-dom";
 import { ProfileDropdown } from "./ui/ProfileIcon";
+import { useLoginUserMutation } from "@/slices/api/authApi";
+import { toast } from "sonner";
+import { useSelector } from "react-redux";
 
-const Navbar = ({ isLoggedIn }) => {
+const Navbar = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { user } = useSelector((store) => store.auth);
+
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.toggle("dark", darkMode);
   }, [darkMode]);
-
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const Links = [
     {
       title: "Home",
       nav: "/",
+      show: true,
     },
     {
       title: "About Us",
       nav: "/",
+      show: true,
     },
     {
-      title: "Courses",
+      title: "Explore",
       nav: "/all-courses",
+      show: true,
     },
     {
       title: "My Learnings",
       nav: "/my-learnings",
-    },
-    {
-      title: "Explore",
-      nav: "/",
+      show: isAuthenticated,
     },
   ];
 
@@ -51,17 +56,20 @@ const Navbar = ({ isLoggedIn }) => {
 
         {/* Center: Links */}
         <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 space-x-8">
-          {Links.map((item) => (
-            <a
-              key={item.title}
-              onClick={() => navigate(item.nav)}
-              className="relative group"
-            >
-              <span className="group-hover:text-custom-yellow cursor-pointer font-bold underline-offset-4">
-                {item.title}
-              </span>
-            </a>
-          ))}
+          {Links.map(
+            (item) =>
+              item.show && (
+                <a
+                  key={item.title}
+                  onClick={() => navigate(item.nav)}
+                  className="relative group"
+                >
+                  <span className="group-hover:text-custom-yellow cursor-pointer font-bold underline-offset-4">
+                    {item.title}
+                  </span>
+                </a>
+              )
+          )}
         </div>
 
         {/* Right: Actions */}
@@ -73,13 +81,13 @@ const Navbar = ({ isLoggedIn }) => {
               <Moon className="w-5 h-5" />
             )}
           </button>
-          {isLoggedIn ? (
+          {isAuthenticated ? (
             <ProfileDropdown className="w-6 h-6 cursor-pointer" />
           ) : (
             <>
               <button
                 onClick={() => navigate("/login")}
-                className="px-4 py-1 rounded bg-white text-custom-blue hover:bg-black hover:text-white"
+                className="px-4 py-1 rounded bg-white text-black hover:bg-black hover:text-white"
               >
                 Login
               </button>
@@ -102,7 +110,7 @@ const Navbar = ({ isLoggedIn }) => {
               <Moon className="w-5 h-5" />
             )}
           </button>
-          {isLoggedIn && (
+          {isAuthenticated && (
             <ProfileDropdown className="w-6 h-6 text-custom-orange cursor-pointer" />
           )}
           <button onClick={toggleMenu}>
@@ -120,25 +128,28 @@ const Navbar = ({ isLoggedIn }) => {
       {menuOpen && (
         <div className="md:hidden absolute top-full left-0 w-full bg-transparent backdrop-blur-md dark:bg-gray-900 text-black px-6 py-4 space-y-4 shadow-lg z-40">
           <ul className="space-y-3 w-full">
-            {Links.map((item) => (
-              <li
-                className="flex justify-center dark:text-white"
-                key={item.title}
-              >
-                <a
-                  onClick={() => {
-                    setMenuOpen(!menuOpen);
-                    navigate(item.nav);
-                  }}
-                  className="block cursor-pointer w-fit border-b-2 text-center border-transparent hover:border-custom-orange transition duration-200"
-                >
-                  {item.title}
-                </a>
-              </li>
-            ))}
+            {Links.map(
+              (item) =>
+                item.show && (
+                  <li
+                    className="flex justify-center dark:text-white"
+                    key={item.title}
+                  >
+                    <a
+                      onClick={() => {
+                        setMenuOpen(!menuOpen);
+                        navigate(item.nav);
+                      }}
+                      className="block cursor-pointer w-fit border-b-2 text-center border-transparent hover:border-custom-orange transition duration-200"
+                    >
+                      {item.title}
+                    </a>
+                  </li>
+                )
+            )}
           </ul>
           <div className="flex items-center justify-center space-x-4 pt-4 border-t border-gray-700">
-            {!isLoggedIn && (
+            {!isAuthenticated && (
               <>
                 <button
                   onClick={() => {

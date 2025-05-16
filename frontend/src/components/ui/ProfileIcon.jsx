@@ -1,10 +1,31 @@
 import { useState, useRef, useEffect } from "react";
 import { User, Book, LogOut, UserCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  useLoginUserMutation,
+  useLogoutUserMutation,
+} from "@/slices/api/authApi";
+import { toast } from "sonner";
 
 export function ProfileDropdown() {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
+  const navigate = useNavigate();
+  const [logoutUser, { data: logoutData, isSuccess, error, isError }] =
+    useLogoutUserMutation();
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(logoutData.message || "User Logged Out.");
+      navigate("/login");
+    } else if (isError) {
+      toast.error(error.message || "Some Error Occured. Try Again.");
+    }
+  }, [logoutData, isSuccess, isError]);
+
+  const handleLogout = async () => {
+    await logoutUser();
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -51,7 +72,10 @@ export function ProfileDropdown() {
             </Link>
           </ul>
           <div className="border-t dark:border-gray-700 px-4 py-2">
-            <div className="flex items-center gap-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-600/10 cursor-pointer rounded py-1">
+            <div
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-600/10 cursor-pointer rounded py-1"
+            >
               <LogOut className="w-4 h-4" />
               Log out
             </div>
