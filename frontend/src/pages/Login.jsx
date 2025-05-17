@@ -82,14 +82,11 @@ function Authenticate() {
   useEffect(() => {
     if (registerIsSuccess && registerData) {
       toast.success(registerData.message || "User Registered Succesfully.");
-    }
-    if (registerError) {
+    } else if (registerError) {
       toast.error(registerError.message || "Signup Failed.");
-    }
-    if (loginIsSuccess && loginData) {
+    } else if (loginIsSuccess && loginData) {
       toast.success(loginData.message || "User Logged In Succesfully.");
-    }
-    if (loginError) {
+    } else if (loginError) {
       toast.error(loginError.message || "Login Failed.");
     }
   }, [

@@ -6,6 +6,7 @@ import {
   useLogoutUserMutation,
 } from "@/slices/api/authApi";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
 
 export function ProfileDropdown() {
   const [open, setOpen] = useState(false);
@@ -13,6 +14,7 @@ export function ProfileDropdown() {
   const navigate = useNavigate();
   const [logoutUser, { data: logoutData, isSuccess, error, isError }] =
     useLogoutUserMutation();
+  const user = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (isSuccess) {
@@ -43,7 +45,17 @@ export function ProfileDropdown() {
         onClick={() => setOpen(!open)}
         className="p-1 rounded-full focus:outline-none focus:ring-custom-orange"
       >
-        <UserCircle className="w-6 h-6 text-black dark:text-white" />
+        {user.isAuthenticated && user.user.imageUrl ? (
+          <div className="w-6 h-6 overflow-hidden rounded-full">
+            <img
+              src={user?.user?.imageUrl}
+              alt="Profile Photo"
+              className="object-cover w-full h-full"
+            />
+          </div>
+        ) : (
+          <UserCircle className="w-6 h-6 text-black dark:text-white" />
+        )}
       </button>
 
       {open && (

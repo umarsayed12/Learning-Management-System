@@ -144,6 +144,7 @@ const Navbar = () => {
                     >
                       {item.title}
                     </a>
+                    
                   </li>
                 )
             )}

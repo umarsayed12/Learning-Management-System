@@ -8,7 +8,7 @@ dotenv.config({});
 const app = express();
 dbConnect();
 app.get("/", (req, res) => {
-  res.send("Hello Bach!!!");
+  res.send("Server Running...");
 });
 const port = process.env.PORT || 5000;
 

@@ -55,6 +55,10 @@ function ProfilePage() {
     }
   }, [error, updateUserData, isSuccess, isError]);
 
+  useEffect(() => {
+    refetch();
+  }, []);
+
   if (isLoading) {
     return (
       <div className="p-16 pt-16 w-full min-h-screen">
