@@ -14,17 +14,18 @@ import {
 } from "@/components/ui/select";
 import { FileUpload } from "@/components/ui/file-uploads";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
-  useCreateCourseMutation,
+  useGetInstructorCourseQuery,
   useUploadPhotoMutation,
 } from "@/slices/api/courseApi";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { CourseCategories } from "@/lib/constants";
-export default function AddCourse() {
-  const [createCourse, { data, isLoading, error, isSuccess, isError }] =
-    useCreateCourseMutation();
+export default function EditCourse() {
+  const { courseId } = useParams();
+
+  const { data, isSuccess, isError, error } = useGetInstructorCourseQuery();
   const [
     uploadPhoto,
     {
@@ -54,6 +55,23 @@ export default function AddCourse() {
       thumbnail: null,
     },
   });
+  useEffect(() => {
+    if (isSuccess && data?.courses?.length) {
+      const course = data.courses.find((c) => c._id === courseId);
+      if (course) {
+        reset({
+          title: course.courseTitle || "",
+          subTitle: course.subTitle || "",
+          description: course.description || "",
+          category: course.category || "",
+          level: course.courseLevel || "",
+          price: course.coursePrice || "",
+          publish: course.isPublished ? "Yes" : "No",
+          thumbnail: course.courseThumbnail || null,
+        });
+      }
+    }
+  }, [isSuccess, data, courseId, reset]);
 
   const file = watch("thumbnail");
   const [submitLoading, isSubmitLoading] = useState(false);
@@ -68,16 +86,16 @@ export default function AddCourse() {
     const imageCloudUrl = await uploadPhoto({ image: file }).unwrap();
     const thumbnail = imageCloudUrl.photoUrl;
     if (thumbnail) {
-      await createCourse({
-        courseTitle: data.title,
-        subTitle: data.subTitle,
-        description: data.description,
-        category: data.category,
-        courseLevel: data.level,
-        coursePrice: Number(data.price),
-        courseThumbnail: thumbnail,
-        isPublished: data.publish === "Yes" ? true : false,
-      });
+      //   await createCourse({
+      //     courseTitle: data.title,
+      //     courseSubtitle: data.subTitle,
+      //     description: data.description,
+      //     category: data.category,
+      //     courseLevel: data.level,
+      //     coursePrice: Number(data.price),
+      //     courseThumbnail: thumbnail,
+      //     isPublished: data.publish === "Yes" ? true : false,
+      //   });
       isSubmitLoading(false);
       reset();
       setFileInputKey(Date.now());
@@ -101,10 +119,10 @@ export default function AddCourse() {
   return (
     <div className="shadow-input mx-auto md:w-[90%] p-4 pt-16 rounded-none md:rounded-2xl md:p-20">
       <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
-        Create a Course
+        Edit Course
       </h2>
       <p className="mt-2 max-w-sm text-sm text-neutral-600 dark:text-neutral-300">
-        Enter the details of the course
+        Edit the details of the course
       </p>
 
       <form
@@ -225,7 +243,7 @@ export default function AddCourse() {
               className="group/btn relative block h-10 max-w-md w-full rounded-md "
               type="submit"
             >
-              Create Course &rarr;
+              Save Changes &rarr;
               <BottomGradient />
             </Button>
           </div>
@@ -238,7 +256,7 @@ export default function AddCourse() {
               type="submit"
             >
               <Loader2 className=" h-4 w-4 animate-spin" />
-              Please wait...
+              Saving...
               <BottomGradient />
             </Button>
           </div>

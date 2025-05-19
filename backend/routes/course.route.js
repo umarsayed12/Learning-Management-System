@@ -1,8 +1,17 @@
 import express from "express";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
-import { createCourse } from "../controllers/course.controller.js";
+import {
+  createCourse,
+  getInstructorCourses,
+  UploadImage,
+} from "../controllers/course.controller.js";
+import upload from "../utils/multer.js";
 
 const router = express.Router();
 
 router.route("/").post(isAuthenticated, createCourse);
+router.route("/").get(isAuthenticated, getInstructorCourses);
+router
+  .route("/upload-image")
+  .post(isAuthenticated, upload.single("thumbnailImage"), UploadImage);
 export default router;

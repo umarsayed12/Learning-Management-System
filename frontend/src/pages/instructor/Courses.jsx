@@ -1,3 +1,4 @@
+import LoadingScreen from "@/components/LoadingScreen";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -9,55 +10,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useGetInstructorCourseQuery } from "@/slices/api/courseApi";
+import { Edit } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const courses = [
-  {
-    id: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    id: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    id: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    id: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    id: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    id: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    id: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-];
 
 function Courses() {
   const navigate = useNavigate();
+  const { data, isLoading, refetch } = useGetInstructorCourseQuery();
+  const [totalAmount, setTotalAmount] = useState(0);
+  console.log(data);
+
+  const courses = data?.courses;
+  useEffect(() => {
+    refetch();
+    if (courses?.length) {
+      const total = courses.reduce(
+        (acc, course) => acc + Number(course.coursePrice || 0),
+        0
+      );
+      setTotalAmount(total);
+    }
+  }, [courses]);
+  if (isLoading) return <LoadingScreen />;
   return (
     <div className="w-full p-4 md:p-16 md:pl-20 pt-16 min-h-screen">
       <h1 className="text-3xl p-5 border-b-2 text-center lg:text-start font-zilla font-bold text-blueDark mb-8">
@@ -74,20 +49,37 @@ function Courses() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[100px]">CourseId</TableHead>
+                  <TableHead className="">S.No.</TableHead>
+                  <TableHead>Title</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Method</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead className="">Amount</TableHead>
+                  <TableHead className=""></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {courses.map((course) => (
-                  <TableRow key={course.id}>
-                    <TableCell className="font-medium">{course.id}</TableCell>
-                    <TableCell>{course.paymentStatus}</TableCell>
-                    <TableCell>{course.paymentMethod}</TableCell>
-                    <TableCell className="text-right">
-                      {course.totalAmount}
+                {courses.map((course, idx) => (
+                  <TableRow key={course?._id}>
+                    <TableCell className="font-medium">{idx + 1}</TableCell>
+                    <TableCell className="font-medium">
+                      {course.courseTitle}
+                    </TableCell>
+                    <TableCell>
+                      <div
+                        className={`w-20 p-1 text-center text-black rounded-xl bg-${
+                          course.isPublished ? "green-400" : "red-400"
+                        }`}
+                      >
+                        {course?.isPublished ? "Published" : "Draft"}
+                      </div>
+                    </TableCell>
+                    <TableCell>₹{course.coursePrice}</TableCell>
+                    <TableCell>
+                      <Button
+                        onClick={() => navigate(`${course._id}`)}
+                        variant="ghost"
+                      >
+                        <Edit />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -95,7 +87,9 @@ function Courses() {
               <TableFooter>
                 <TableRow>
                   <TableCell colSpan={3}>Total</TableCell>
-                  <TableCell className="text-right">$2,500.00</TableCell>
+                  <TableCell colSpan={2} className="">
+                    ₹{totalAmount}
+                  </TableCell>
                 </TableRow>
               </TableFooter>
             </Table>
@@ -104,7 +98,9 @@ function Courses() {
           <>
             You haven't created any course yet.{" "}
             <>
-              <Button>Create Course</Button>
+              <Button onClick={() => navigate("/admin/add-course")}>
+                Create Course
+              </Button>
             </>
           </>
         )}
