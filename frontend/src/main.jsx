@@ -11,10 +11,14 @@ import Authenticate from "./pages/Login";
 import HeroSection from "./pages/student/HeroSection";
 import AllCourses from "./pages/student/AllCourses";
 import MyLearning from "./pages/student/MyLearning";
-import ProfilePage from "./pages/student/ProfilePage";
+import ProfilePage from "./pages/ProfilePage";
 import AuthLayout from "./components/AuthLayout";
 import { useLoadUserQuery } from "./slices/api/authApi";
 import LoadingScreen from "./components/LoadingScreen";
+import MainPage from "./pages/instructor/MainPage";
+import Dashboard from "./pages/instructor/Dashboard";
+import Courses from "./pages/instructor/Courses";
+import AddCourse from "./pages/instructor/Courses/AddCourse";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -59,6 +63,26 @@ const router = createBrowserRouter([
             <ProfilePage />
           </AuthLayout>
         ),
+      },
+
+      //Instructor Routes
+      {
+        path: "admin",
+        element: <MainPage />,
+        children: [
+          {
+            path: "dashboard",
+            element: <Dashboard />,
+          },
+          {
+            path: "courses",
+            element: <Courses />,
+          },
+          {
+            path: "add-course",
+            element: <AddCourse />,
+          },
+        ],
       },
     ],
   },

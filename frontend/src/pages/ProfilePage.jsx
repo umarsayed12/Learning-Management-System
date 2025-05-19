@@ -146,7 +146,11 @@ function ProfilePage() {
                   onClick={handleUserUpdate}
                   type="submit"
                 >
-                  {updateuserIsLoading ? <Loader2 /> : "Save changes"}
+                  {updateuserIsLoading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    "Save changes"
+                  )}
                 </Button>
               </DialogFooter>
             </DialogContent>

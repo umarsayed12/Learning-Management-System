@@ -7,6 +7,7 @@ import {
 } from "@/slices/api/authApi";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
+import { IconDashboard } from "@tabler/icons-react";
 
 export function ProfileDropdown() {
   const [open, setOpen] = useState(false);
@@ -73,15 +74,27 @@ export function ProfileDropdown() {
                 Profile
               </li>
             </Link>
-            <Link to="/my-learnings" className="">
-              <li
-                onClick={() => setOpen(false)}
-                className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer gap-2"
-              >
-                <Book className="w-4 h-4" />
-                My Learnings
-              </li>
-            </Link>
+            {user.user.role === "student" ? (
+              <Link to="/my-learnings" className="">
+                <li
+                  onClick={() => setOpen(false)}
+                  className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer gap-2"
+                >
+                  <Book className="w-4 h-4" />
+                  My Learnings
+                </li>
+              </Link>
+            ) : (
+              <Link to="admin/dashboard" className="">
+                <li
+                  onClick={() => setOpen(false)}
+                  className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer gap-2"
+                >
+                  <IconDashboard className="w-4 h-4" />
+                  Dashboard
+                </li>
+              </Link>
+            )}
           </ul>
           <div className="border-t dark:border-gray-700 px-4 py-2">
             <div

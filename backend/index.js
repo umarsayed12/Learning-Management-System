@@ -4,6 +4,7 @@ import dbConnect from "./database/db.js";
 import userRoute from "./routes/user.route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import courseRoute from "./routes/course.route.js";
 dotenv.config({});
 const app = express();
 dbConnect();
@@ -23,6 +24,7 @@ app.use(
 );
 //apis
 app.use("/api/v1/user/", userRoute);
+app.use("/api/v1/course/", courseRoute);
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
