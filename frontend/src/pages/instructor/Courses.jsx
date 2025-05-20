@@ -19,7 +19,6 @@ function Courses() {
   const navigate = useNavigate();
   const { data, isLoading, refetch } = useGetInstructorCourseQuery();
   const [totalAmount, setTotalAmount] = useState(0);
-  console.log(data);
 
   const courses = data?.courses;
   useEffect(() => {
@@ -49,31 +48,40 @@ function Courses() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="">S.No.</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="">Amount</TableHead>
-                  <TableHead className=""></TableHead>
+                  <TableHead className="text-center">S.No.</TableHead>
+                  <TableHead className="text-center">Title</TableHead>
+                  <TableHead className="text-center">Status</TableHead>
+                  <TableHead className="text-center">Amount</TableHead>
+                  <TableHead className="text-center"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {courses.map((course, idx) => (
                   <TableRow key={course?._id}>
-                    <TableCell className="font-medium">{idx + 1}</TableCell>
-                    <TableCell className="font-medium">
+                    <TableCell className="text-center">{idx + 1}</TableCell>
+                    <TableCell className="text-center">
                       {course.courseTitle}
                     </TableCell>
-                    <TableCell>
-                      <div
-                        className={`w-20 p-1 text-center text-black rounded-xl bg-${
-                          course.isPublished ? "green-400" : "red-400"
-                        }`}
-                      >
-                        {course?.isPublished ? "Published" : "Draft"}
-                      </div>
+                    <TableCell className="flex justify-center">
+                      {course.isPublished && (
+                        <div
+                          className={`w-20 text-black text-center rounded-xl bg-green-500`}
+                        >
+                          Published
+                        </div>
+                      )}
+                      {!course.isPublished && (
+                        <div
+                          className={`w-20 text-black text-center rounded-xl bg-yellow-500`}
+                        >
+                          Draft
+                        </div>
+                      )}
                     </TableCell>
-                    <TableCell>₹{course.coursePrice}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-center">
+                      ₹{course.coursePrice}
+                    </TableCell>
+                    <TableCell className="flex justify-center">
                       <Button
                         onClick={() => navigate(`${course._id}`)}
                         variant="ghost"
@@ -86,10 +94,11 @@ function Courses() {
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell colSpan={3}>Total</TableCell>
-                  <TableCell colSpan={2} className="">
-                    ₹{totalAmount}
+                  <TableCell className="pl-[4%] text-start" colSpan={3}>
+                    Total Price
                   </TableCell>
+                  <TableCell className="text-center">₹{totalAmount}</TableCell>
+                  <TableCell className="text-center"></TableCell>
                 </TableRow>
               </TableFooter>
             </Table>

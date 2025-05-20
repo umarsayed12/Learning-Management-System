@@ -32,6 +32,13 @@ export const courseApi = createApi({
         },
       }),
     }),
+    updateInstructorCourse: builder.mutation({
+      query: ({ id, formData }) => ({
+        url: `/${id}`,
+        method: "PATCH",
+        body: formData,
+      }),
+    }),
     uploadPhoto: builder.mutation({
       query: ({ image }) => {
         const formData = new FormData();
@@ -55,4 +62,5 @@ export const {
   useCreateCourseMutation,
   useUploadPhotoMutation,
   useGetInstructorCourseQuery,
+  useUpdateInstructorCourseMutation,
 } = courseApi;

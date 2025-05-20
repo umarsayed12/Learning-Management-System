@@ -17,15 +17,32 @@ import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   useGetInstructorCourseQuery,
+  useUpdateInstructorCourseMutation,
   useUploadPhotoMutation,
 } from "@/slices/api/courseApi";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { CourseCategories } from "@/lib/constants";
+import LoadingScreen from "@/components/LoadingScreen";
 export default function EditCourse() {
   const { courseId } = useParams();
+  const [
+    updateInstructorCourse,
+    {
+      data: updateCourseData,
+      error: updateCourseError,
+      isLoading: updateCourseIsLoading,
+      isError: updateCourseIsError,
+    },
+  ] = useUpdateInstructorCourseMutation();
+  const {
+    data: CoursesData,
+    isSuccess: CoursesDataIsSuccess,
+    isLoading: CourseDataIsLoading,
+    refetch,
+  } = useGetInstructorCourseQuery();
+  console.log(CoursesData);
 
-  const { data, isSuccess, isError, error } = useGetInstructorCourseQuery();
   const [
     uploadPhoto,
     {
@@ -56,8 +73,8 @@ export default function EditCourse() {
     },
   });
   useEffect(() => {
-    if (isSuccess && data?.courses?.length) {
-      const course = data.courses.find((c) => c._id === courseId);
+    if (CoursesDataIsSuccess && CoursesData?.courses?.length) {
+      const course = CoursesData.courses.find((c) => c._id === courseId);
       if (course) {
         reset({
           title: course.courseTitle || "",
@@ -71,51 +88,51 @@ export default function EditCourse() {
         });
       }
     }
-  }, [isSuccess, data, courseId, reset]);
+  }, [CoursesDataIsSuccess, CoursesData, courseId, reset]);
 
   const file = watch("thumbnail");
   const [submitLoading, isSubmitLoading] = useState(false);
   const [fileInputKey, setFileInputKey] = useState(Date.now());
   const onSubmit = async (data) => {
     isSubmitLoading(true);
-    const file = data.thumbnail[0];
-    if (!file) {
-      isSubmitLoading(false);
-      return;
-    }
-    const imageCloudUrl = await uploadPhoto({ image: file }).unwrap();
-    const thumbnail = imageCloudUrl.photoUrl;
-    if (thumbnail) {
-      //   await createCourse({
-      //     courseTitle: data.title,
-      //     courseSubtitle: data.subTitle,
-      //     description: data.description,
-      //     category: data.category,
-      //     courseLevel: data.level,
-      //     coursePrice: Number(data.price),
-      //     courseThumbnail: thumbnail,
-      //     isPublished: data.publish === "Yes" ? true : false,
-      //   });
+    try {
+      let thumbnail = data.thumbnail;
+      if (thumbnail && typeof thumbnail[0] === "object") {
+        const file = thumbnail[0];
+        const imageCloudUrl = await uploadPhoto({ image: file }).unwrap();
+        thumbnail = imageCloudUrl.photoUrl;
+      } else {
+        thumbnail = file;
+      }
+
+      await updateInstructorCourse({
+        id: courseId,
+        formData: {
+          courseTitle: data.title,
+          subTitle: data.subTitle,
+          description: data.description,
+          category: data.category,
+          courseLevel: data.level,
+          coursePrice: Number(data.price),
+          courseThumbnail: thumbnail,
+          isPublished: data.publish === "Yes" ? true : false,
+        },
+      });
+      toast.success("Course Updated Successfully!");
       isSubmitLoading(false);
       reset();
       setFileInputKey(Date.now());
       navigate("/admin/courses");
+    } catch (error) {
+      toast.error("Failed to update course.");
+      isSubmitLoading(false);
     }
   };
 
   const handleFileUpload = (newFile) => {
     setValue("thumbnail", newFile);
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      toast.success(data.message || "Course Created Successfully.");
-    }
-    if (isError) {
-      toast.success(error.message || "Some Error Occured. Please try Again.");
-    }
-  }, [isSuccess, isError]);
-
+  if (CourseDataIsLoading) return <LoadingScreen />;
   return (
     <div className="shadow-input mx-auto md:w-[90%] p-4 pt-16 rounded-none md:rounded-2xl md:p-20">
       <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
@@ -158,7 +175,7 @@ export default function EditCourse() {
             id="description"
             placeholder="Description goes here..."
             {...register("description", { required: true })}
-            className="flex h-[200px] w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+            className="flex  h-[200px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
           />
           {errors.description && (
             <span className="text-red-500 text-sm">
@@ -216,7 +233,14 @@ export default function EditCourse() {
 
         <LabelInputContainer>
           <Label htmlFor="thumbnail">Upload Thumbnail *</Label>
-          <div className="flex justify-center items-center">
+          <div className="flex flex-col justify-center items-center">
+            {typeof file === "string" && (
+              <img
+                src={file}
+                alt="Current Thumbnail"
+                className="h-32 object-contain mt-2"
+              />
+            )}
             <FileUpload
               key={fileInputKey}
               {...register("thumbnail", { required: true })}
